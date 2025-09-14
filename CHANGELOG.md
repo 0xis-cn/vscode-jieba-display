@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.1.8
+
+- Update dependencies
+- Fix behaviors on ASCII symbols
+
 ## 0.1.6
 
 - Set the minimum required VSCode version to 1.67.0
