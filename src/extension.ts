@@ -6,28 +6,18 @@ import {
   killWord,
   selectWord,
 } from "./command";
+import { doubleClickOnTextListener } from "./listener";
 
 export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.commands.registerCommand("jieba.forwardWord", forwardWord),
-  );
-
-  context.subscriptions.push(
     vscode.commands.registerCommand("jieba.backwardWord", backwardWord),
-  );
-
-  context.subscriptions.push(
     vscode.commands.registerCommand("jieba.killWord", killWord),
-  );
-
-  context.subscriptions.push(
     vscode.commands.registerCommand("jieba.backwardKillWord", backwardKillWord),
-  );
-
-  context.subscriptions.push(
     vscode.commands.registerCommand("jieba.selectWord", selectWord),
+    vscode.window.onDidChangeTextEditorSelection(doubleClickOnTextListener),
   );
 }
 
 // This method is called when your extension is deactivated
-export function deactivate() {}
+export function deactivate() { }

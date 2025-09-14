@@ -18,6 +18,8 @@ VSCode 本身以及 Vim、Emacs 插件都不具备中文分词功能。比如 Vi
 | `jieba.backwardKillWord` | 光标后退删除一个词   | `Shift` + `Alt` + `Backspace` |
 | `jieba.selectWord`       | 选中光标下方的一个词 | `Shift` + `Alt` + `2`         |
 
+如果需要双击选中时分词，请启用`selectOnDoubleClick`设置。
+
 ## 示例
 
 ![](https://github.com/stephanoskomnenos/vscode-jieba/raw/main/images/chn1.gif)

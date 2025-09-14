@@ -66,7 +66,27 @@
         "command": "jieba.selectWord",
         "title": "Jieba: Select Word"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "Jieba",
+      "properties": {
+        "jieba.enableOnDoubleClick": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable selection on double click."
+        },
+        "jieba.clicksInterval": {
+          "type": "number",
+          "default": 500,
+          "description": "The maximum interval in milliseconds between clicks to be considered a double click."
+        },
+        "jieba.triggerDelay": {
+          "type": "number",
+          "default": 150,
+          "description": "The delay after triggering the selection, to prevent conflicting with normal selection."
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "bun run compile",
