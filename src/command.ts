@@ -71,25 +71,26 @@ export function selectWord() {
     return;
   }
 
-  const selections = editor.selections;
-
-  const newSelections: vscode.Selection[] = [];
-
-  for (const selection of selections) {
+  editor.selections = editor.selections.map((selection) => {
     const start = selection.start;
     const end = selection.end;
     const lineNum = start.line;
+    const startNext = new vscode.Position(lineNum, start.character + 1);
 
-    const wordStartPos = findWordStartPosition(start);
+    const wordStartPos = findWordStartPosition(startNext);
+    if (wordStartPos === undefined) {
+      return selection;
+    }
     const wordStart = new vscode.Position(lineNum, wordStartPos);
 
     const wordEndPos = findWordEndPosition(end);
+    if (wordEndPos === undefined) {
+      return selection;
+    }
     const wordEnd = new vscode.Position(lineNum, wordEndPos);
 
-    newSelections.push(new vscode.Selection(wordStart, wordEnd));
-  }
-
-  editor.selections = newSelections;
+    return new vscode.Selection(wordStart, wordEnd);
+  });
 }
 
 function searchForward(): {
@@ -148,6 +149,10 @@ function searchForward(): {
     }
 
     const wordEndPos = findWordEndPosition(cursor);
+    if (wordEndPos === undefined) {
+      newSelections.push(selection);
+      continue;
+    }
     const wordEnd = new vscode.Position(cursor.line, wordEndPos);
 
     rangesToDelete.push(new vscode.Range(cursor, wordEnd));
@@ -211,6 +216,10 @@ function searchBackward(): {
     }
 
     const wordStartPos = findWordStartPosition(cursor);
+    if (wordStartPos === undefined) {
+      newSelections.push(selection);
+      continue;
+    }
     const wordStart = new vscode.Position(cursor.line, wordStartPos);
 
     rangesToDelete.push(new vscode.Range(wordStart, cursor));
@@ -274,7 +283,7 @@ function findStartOfLastNonCJKWord(text: string): number | undefined {
   return text.length - match[0].length;
 }
 
-function findWordStartPosition(cursor: vscode.Position): number {
+function findWordStartPosition(cursor: vscode.Position): number | undefined {
   const line = vscode.window.activeTextEditor!.document.lineAt(cursor.line);
 
   const wordStartPos = findStartOfLastNonCJKWord(line.text.slice(0, cursor.character));
@@ -292,11 +301,11 @@ function findWordStartPosition(cursor: vscode.Position): number {
   const tokens = parseSentence(line.text);
   const target = tokens.find((token) => {
     return token.start < cursor.character && token.end >= cursor.character;
-  })!;
-  return target.start;
+  });
+  return target?.start;
 }
 
-function findWordEndPosition(cursor: vscode.Position): number {
+function findWordEndPosition(cursor: vscode.Position): number | undefined {
   const line = vscode.window.activeTextEditor!.document.lineAt(cursor.line);
 
   const wordEndPos = findEndOfFirstNonCJKWord(line.text.slice(cursor.character));
@@ -314,6 +323,6 @@ function findWordEndPosition(cursor: vscode.Position): number {
   const tokens = parseSentence(line.text);
   const target = tokens.find((token) => {
     return token.start <= cursor.character && token.end > cursor.character;
-  })!;
-  return target.end;
+  });
+  return target?.end;
 }
