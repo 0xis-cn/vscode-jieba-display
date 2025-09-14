@@ -15,12 +15,17 @@ suite("Extension Test Suite", () => {
 
   test("Basic test", basicTest);
   test("English test", englishTest);
+  test("Javascript expression test", jsExpTest)
 });
 
 const chnText = "“自由软件”尊重用户的自由，并且尊重整个社区。";
 
 const engText =
   "“Free software” means software that respects users' freedom and community. ";
+
+const jsExpText = `(value === 0 && text === "sample text") || 
+value === 1 ||
+text.length > 100`
 
 async function basicTest() {
   const doc = await vscode.workspace.openTextDocument();
@@ -92,6 +97,57 @@ async function englishTest() {
   }
   for (let i = 0; i < 20; i++) {
     await backwardKillWord();
+  }
+
+  assert.strictEqual(
+    editor.selection.start.isEqual(editor.document.lineAt(0).range.start),
+    true,
+  );
+}
+
+async function jsExpTest() {
+  const doc = await vscode.workspace.openTextDocument();
+  await vscode.window.showTextDocument(doc);
+  const editor = vscode.window.activeTextEditor;
+  assert.ok(editor !== undefined);
+
+  const startPos = new vscode.Position(0, 0);
+  await editor.edit((edit) => {
+    edit.insert(startPos, jsExpText);
+  });
+  editor.selection = new vscode.Selection(startPos, startPos);
+
+  for (let i = 0; i < 5; i++) {
+    forwardWord();
+  }
+
+  // 在`"sample text"`后面的`"`上
+  assert.strictEqual(
+    editor.selection.start.isEqual(new vscode.Position(0, 37)),
+    true,
+  );
+
+  for (let i = 0; i < 3; i++) {
+    backwardWord();
+  }
+
+  // 在`text ===`开头的`t`上
+  assert.strictEqual(
+    editor.selection.start.isEqual(new vscode.Position(0, 16)),
+    true,
+  );
+
+  for (let i = 0; i < 50; i++) {
+    forwardWord();
+  }
+
+  assert.strictEqual(
+    editor.selection.start.isEqual(editor.document.lineAt(2).range.end),
+    true,
+  );
+
+  for (let i = 0; i < 50; i++) {
+    backwardWord();
   }
 
   assert.strictEqual(

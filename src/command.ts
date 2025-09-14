@@ -120,10 +120,10 @@ function searchForward(): {
      */
     if (
       cursor.character !== line.range.end.character &&
-      isWhiteSpace(line.text[cursor.character])
+      isWhiteSpaceOrAsciiSymbol(line.text[cursor.character])
     ) {
-      const nonSpacePos = findFirstNonSpace(line.text.slice(cursor.character));
-      const nextPos = nonSpacePos === -1
+      const nonSpacePos = findFirstContentChar(line.text.slice(cursor.character));
+      const nextPos = nonSpacePos === undefined
         ? line.range.end.character
         : cursor.character + nonSpacePos;
       const nextNonSpace = new vscode.Position(cursor.line, nextPos);
@@ -184,12 +184,12 @@ function searchBackward(): {
      * then continue the process of moving backward.
      */
     if (
-      cursor.character !== 0 && isWhiteSpace(line.text[cursor.character - 1])
+      cursor.character !== 0 && isWhiteSpaceOrAsciiSymbol(line.text[cursor.character - 1])
     ) {
-      const nonSpacePos = findLastNonSpace(
+      const nonSpacePos = findLastContentChar(
         line.text.slice(0, cursor.character),
       );
-      const whitespaceStart = new vscode.Position(cursor.line, nonSpacePos + 1);
+      const whitespaceStart = new vscode.Position(cursor.line, nonSpacePos === undefined ? 0 : nonSpacePos + 1);
       rangesToDelete.push(new vscode.Range(whitespaceStart, cursor));
       cursor = whitespaceStart;
 
@@ -220,34 +220,56 @@ function searchBackward(): {
   return { newSelections, rangesToDelete };
 }
 
-function findFirstNonSpace(text: string): number {
-  return text.search(/[^\s]/);
+/**
+ * 查找字符串中第一个“内容字符”（非空格、非ASCII符号）的索引。
+ * @param text 要搜索的字符串。
+ * @returns 第一个内容字符的索引，如果不存在则返回 undefined。
+ */
+function findFirstContentChar(text: string): number | undefined {
+  const result = text.search(/[^\s\x21-\x2F\x3A-\x40\x5B-\x60\x7B-\x7E]/);
+  return result === -1 ? undefined : result;
 }
 
-function findLastNonSpace(text: string): number {
-  const match = text.match(/(^.*)([^\s])\s*$/);
+/**
+ * 查找字符串中最后一个“内容字符”（非空格、非ASCII符号）的索引。
+ * @param text 要搜索的字符串。
+ * @returns 最后一个内容字符的索引，如果不存在则返回 undefined。
+ */
+function findLastContentChar(text: string): number | undefined {
+  const match = text.match(/([^\s\x21-\x2F\x3A-\x40\x5B-\x60\x7B-\x7E])[\s\x21-\x2F\x3A-\x40\x5B-\x60\x7B-\x7E]*$/);
+  return match?.index;
+}
+
+/**
+ * 检查单个字符是否是“空白字符”或“ASCII符号”。
+ * @param c 要检查的单个字符。
+ */
+function isWhiteSpaceOrAsciiSymbol(c: string): boolean {
+  return /^[\s\x21-\x2F\x3A-\x40\x5B-\x60\x7B-\x7E]$/.test(c);
+}
+
+/**
+ * 从字符串开头跳过所有空格和ASCII符号，找到第一个单词（由字母、数字、下划线组成），
+ * 并返回该单词结束后的位置索引。如果字符串以CJK字符开头，则匹配失败。
+ * @param text 要搜索的字符串。
+ */
+function findEndOfFirstNonCJKWord(text: string): number | undefined {
+  const match = text.match(/^([\s\x21-\x2F\x3A-\x40\x5B-\x60\x7B-\x7E]*\w+(?<![\u4e00-\u9fff]))\b/);
   if (match === null) {
-    return -1;
-  }
-  return match[1].length + match[2].length - 1;
-}
-
-function isWhiteSpace(c: string): boolean {
-  return /^[\s]$/.test(c);
-}
-
-function findFirstSpaceAfterNonCJK(text: string): number {
-  const match = text.match(/^(\s*\w+(?<![\u4e00-\u9fff]))\b/);
-  if (match === null) {
-    return -1;
+    return undefined;
   }
   return match[1].length;
 }
 
-function findLastSpaceBeforeNonCJK(text: string): number {
-  const match = text.match(/\b\w+(?<![\u4e00-\u9fff])\s*$/);
+/**
+ * 从字符串末尾跳过所有空格和ASCII符号，找到最后一个单词（由字母、数字、下划线组成），
+ * 并返回该单词开始前的位置索引。
+ * @param text 要搜索的字符串。
+ */
+function findStartOfLastNonCJKWord(text: string): number | undefined {
+  const match = text.match(/\b\w+(?<![\u4e00-\u9fff])[\s\x21-\x2F\x3A-\x40\x5B-\x60\x7B-\x7E]*$/);
   if (match === null) {
-    return -1;
+    return undefined;
   }
   return text.length - match[0].length;
 }
@@ -255,10 +277,10 @@ function findLastSpaceBeforeNonCJK(text: string): number {
 function findWordStartPosition(cursor: vscode.Position): number {
   const line = vscode.window.activeTextEditor!.document.lineAt(cursor.line);
 
-  const wordStartPos = findLastSpaceBeforeNonCJK(line.text.slice(0, cursor.character));
+  const wordStartPos = findStartOfLastNonCJKWord(line.text.slice(0, cursor.character));
 
   // non CJK context
-  if (wordStartPos !== -1) {
+  if (wordStartPos !== undefined) {
     return wordStartPos;
   }
 
@@ -277,10 +299,10 @@ function findWordStartPosition(cursor: vscode.Position): number {
 function findWordEndPosition(cursor: vscode.Position): number {
   const line = vscode.window.activeTextEditor!.document.lineAt(cursor.line);
 
-  const wordEndPos = findFirstSpaceAfterNonCJK(line.text.slice(cursor.character));
+  const wordEndPos = findEndOfFirstNonCJKWord(line.text.slice(cursor.character));
 
   // non-CJK context
-  if (wordEndPos !== -1) {
+  if (wordEndPos !== undefined) {
     return cursor.character + wordEndPos;
   }
 
