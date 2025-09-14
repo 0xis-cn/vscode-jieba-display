@@ -4,7 +4,7 @@
   "description": "Jieba Chinese word segmenter for VSCode",
   "version": "0.1.7",
   "engines": {
-    "vscode": "^1.78.1"
+    "vscode": "^1.104.0"
   },
   "publisher": "StephanosKomnenos",
   "homepage": "https://github.com/stephanoskomnenos/vscode-jieba",
@@ -69,27 +69,28 @@
     ]
   },
   "scripts": {
-    "vscode:prepublish": "npm run compile",
+    "vscode:prepublish": "bun run compile",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
-    "pretest": "npm run compile && npm run lint",
+    "pretest": "bun run compile && bun run lint",
     "lint": "eslint src --ext ts",
-    "test": "node ./out/test/runTest.js"
+    "test": "bun ./out/test/runTest.js"
   },
   "devDependencies": {
     "@types/glob": "^8.0.0",
     "@types/mocha": "^10.0.0",
-    "@types/node": "20.x",
-    "@types/vscode": "^1.78.1",
-    "@typescript-eslint/eslint-plugin": "^5.54.0",
-    "@typescript-eslint/parser": "^5.60.1",
-    "@vscode/test-electron": "^2.3.0",
-    "eslint": "^8.41.0",
+    "@types/node": "^24.3.3",
+    "@types/vscode": "^1.104.0",
+    "@typescript-eslint/eslint-plugin": "^8.43.0",
+    "@typescript-eslint/parser": "^8.43.0",
+    "@vscode/test-electron": "^2.5.2",
+    "@vscode/vsce": "^3.6.0",
+    "eslint": "^9.35.0",
     "glob": "^8.0.3",
     "mocha": "^10.0.0",
-    "typescript": "^5.1.6"
+    "typescript": "^5.9.2"
   },
   "dependencies": {
-    "jieba-wasm": "^0.0.2"
+    "jieba-wasm": "^2.2.0"
   }
 }

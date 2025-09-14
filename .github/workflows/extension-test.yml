@@ -15,25 +15,19 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [18.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
     steps:
     - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
+    - uses: oven-sh/setup-bun@v2
+      name: Install bun
       with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
+        bun-version: '1.2.21'
     - run: |
         sudo apt update
         sudo apt install xvfb -y
     - run: Xvfb :1 -screen 0 1920x1080x24 &
     - run: |
-        npm ci
-        npm run pretest
-        npm run test
+        bun ci
+        bun run pretest
+        bun run test
       env:
         DISPLAY: :1
