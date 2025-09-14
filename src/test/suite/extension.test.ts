@@ -15,7 +15,7 @@ suite("Extension Test Suite", () => {
 
   test("Basic test", basicTest);
   test("English test", englishTest);
-  test("Javascript expression test", jsExpTest)
+  test("Javascript expression test", jsExpTest);
 });
 
 const chnText = "“自由软件”尊重用户的自由，并且尊重整个社区。";
@@ -25,7 +25,7 @@ const engText =
 
 const jsExpText = `(value === 0 && text === "sample text") || 
 value === 1 ||
-text.length > 100`
+text.length > 100`;
 
 async function basicTest() {
   const doc = await vscode.workspace.openTextDocument();

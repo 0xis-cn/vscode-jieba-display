@@ -26,6 +26,6 @@ export default defineConfig([globalIgnores(["**/out", "**/dist", "**/*.d.ts"]), 
         "no-trailing-spaces": "warn",
         "prefer-const": "warn",
         quotes: "off",
-        semi: "off",
+        semi: ["warn", "always"],
     },
 }]);
