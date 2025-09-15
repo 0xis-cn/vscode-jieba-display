@@ -2,7 +2,7 @@
   "name": "jieba",
   "displayName": "Jieba",
   "description": "Jieba Chinese word segmenter for VSCode",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "engines": {
     "vscode": "^1.104.0"
   },
@@ -121,6 +121,6 @@
     "typescript": "^5.9.2"
   },
   "dependencies": {
-    "jieba-wasm": "^2.2.0"
+    "@stevenlin/jieba-wasm": "^2.4.0"
   }
 }

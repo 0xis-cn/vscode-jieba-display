@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.3.0
+
+- Add forward/backward in selection mode
+
 ## 0.2.1
 
 - Include wasm build for nodejs only 

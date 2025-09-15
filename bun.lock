@@ -4,7 +4,7 @@
     "": {
       "name": "jieba",
       "dependencies": {
-        "jieba-wasm": "^2.2.0",
+        "@stevenlin/jieba-wasm": "^2.4.0",
       },
       "devDependencies": {
         "@types/glob": "^8.0.0",
@@ -116,6 +116,8 @@
     "@secretlint/types": ["@secretlint/types@10.2.2", "", {}, "sha512-Nqc90v4lWCXyakD6xNyNACBJNJ0tNCwj2WNk/7ivyacYHxiITVgmLUFXTBOeCdy79iz6HtN9Y31uw/jbLrdOAg=="],
 
     "@sindresorhus/merge-streams": ["@sindresorhus/merge-streams@2.3.0", "", {}, "sha512-LtoMMhxAlorcGhmFYI+LhPgbPZCkgP6ra1YL604EeF6U98pLlQ3iWIGMdWSC+vWmPBWBNgmDBAhnAobLROJmwg=="],
+
+    "@stevenlin/jieba-wasm": ["@stevenlin/jieba-wasm@2.4.0", "", {}, "sha512-9Z8oSXxFsYBR7tJnsQIYtkAK2tNf63P8w4b1Atg/3GcpbBxBM/ps6d0oxe35uxkEgzXPJj/LFPB7xNPrkY2tWw=="],
 
     "@textlint/ast-node-types": ["@textlint/ast-node-types@15.2.2", "", {}, "sha512-9ByYNzWV8tpz6BFaRzeRzIov8dkbSZu9q7IWqEIfmRuLWb2qbI/5gTvKcoWT1HYs4XM7IZ8TKSXcuPvMb6eorA=="],
 
@@ -500,8 +502,6 @@
     "istextorbinary": ["istextorbinary@9.5.0", "", { "dependencies": { "binaryextensions": "^6.11.0", "editions": "^6.21.0", "textextensions": "^6.11.0" } }, "sha512-5mbUj3SiZXCuRf9fT3ibzbSSEWiy63gFfksmGfdOzujPjW3k+z8WvIBxcJHBoQNlaZaiyB25deviif2+osLmLw=="],
 
     "jackspeak": ["jackspeak@4.1.1", "", { "dependencies": { "@isaacs/cliui": "^8.0.2" } }, "sha512-zptv57P3GpL+O0I7VdMJNBZCu+BPHVQUk55Ft8/QCJjTVxrnJHuVuX/0Bl2A6/+2oyR/ZMEuFKwmzqqZ/U5nPQ=="],
-
-    "jieba-wasm": ["jieba-wasm@2.2.0", "", {}, "sha512-IwxgUf+EMutjLair3k41i0ApM33qeHNY9EFBKlI5/XtHcISkGt5YPmUvpDJe3hUflwRYhy9g29ZzTetGZw6XgQ=="],
 
     "js-tokens": ["js-tokens@4.0.0", "", {}, "sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ=="],
 
