@@ -21,6 +21,24 @@ export function backwardWord() {
   editor.selections = newSelections;
 }
 
+export function forwardSelectWord() {
+  const editor = vscode.window.activeTextEditor;
+  if (editor === undefined) {
+    return;
+  }
+  const { newSelections } = searchForward(false);
+  editor.selections = newSelections;
+}
+
+export function backwardSelectWord() {
+  const editor = vscode.window.activeTextEditor;
+  if (editor === undefined) {
+    return;
+  }
+  const { newSelections } = searchBackward(false);
+  editor.selections = newSelections;
+}
+
 export async function killWord() {
   const editor = vscode.window.activeTextEditor;
   if (editor === undefined) {
@@ -94,22 +112,26 @@ export function selectWord() {
   });
 }
 
-function searchForward(): {
+function searchForward(moveAnchor: boolean = true): {
   newSelections: vscode.Selection[];
   rangesToDelete: vscode.Range[];
 } {
   const document = vscode.window.activeTextEditor!.document;
   const selections = vscode.window.activeTextEditor!.selections;
 
+  const createNewSelection = (oldSelection: vscode.Selection, newActive: vscode.Position) => {
+    return new vscode.Selection(moveAnchor ? newActive : oldSelection.anchor, newActive);
+  };
+
   const newSelections: vscode.Selection[] = [];
   const rangesToDelete: vscode.Range[] = [];
 
   for (const selection of selections) {
-    let cursor = selection.start;
-    const line = document.lineAt(cursor.line);
+    let newActive = selection.active;
+    const line = document.lineAt(newActive.line);
 
-    if (cursor.isEqual(line.range.end) && document.lineCount === cursor.line + 1) {
-      newSelections.push(new vscode.Selection(cursor, cursor));
+    if (newActive.isEqual(line.range.end) && document.lineCount === newActive.line + 1) {
+      newSelections.push(createNewSelection(selection, newActive));
       continue;
     }
 
@@ -121,19 +143,19 @@ function searchForward(): {
      * then continue the process of moving forward.
      */
     if (
-      cursor.character !== line.range.end.character &&
-      isWhiteSpaceOrAsciiSymbol(line.text[cursor.character])
+      newActive.character !== line.range.end.character &&
+      isWhiteSpaceOrAsciiSymbol(line.text[newActive.character])
     ) {
-      const nonSpacePos = findFirstContentChar(line.text.slice(cursor.character));
+      const nonSpacePos = findFirstContentChar(line.text.slice(newActive.character));
       const nextPos = nonSpacePos === undefined
         ? line.range.end.character
-        : cursor.character + nonSpacePos;
-      const nextNonSpace = new vscode.Position(cursor.line, nextPos);
-      rangesToDelete.push(new vscode.Range(cursor, nextNonSpace));
-      cursor = nextNonSpace;
+        : newActive.character + nonSpacePos;
+      const nextNonSpace = new vscode.Position(newActive.line, nextPos);
+      rangesToDelete.push(new vscode.Range(newActive, nextNonSpace));
+      newActive = nextNonSpace;
 
-      if (cursor.isEqual(line.range.end)) {
-        newSelections.push(new vscode.Selection(cursor, cursor));
+      if (newActive.isEqual(line.range.end)) {
+        newSelections.push(createNewSelection(selection, newActive));
         continue;
       }
     }
@@ -143,42 +165,46 @@ function searchForward(): {
      * and the next line exists,
      * then jump to the beginning of the next line.
      */
-    if (cursor.isEqual(line.range.end) && document.lineCount > cursor.line + 1) {
-      const nextLineStart = new vscode.Position(cursor.line + 1, 0);
-      newSelections.push(new vscode.Selection(nextLineStart, nextLineStart));
+    if (newActive.isEqual(line.range.end) && document.lineCount > newActive.line + 1) {
+      const nextLineStart = new vscode.Position(newActive.line + 1, 0);
+      newSelections.push(createNewSelection(selection, nextLineStart));
       continue;
     }
 
-    const wordEndPos = findWordEndPosition(cursor.character, line.text);
+    const wordEndPos = findWordEndPosition(newActive.character, line.text);
     if (wordEndPos === undefined) {
       newSelections.push(selection);
       continue;
     }
-    const wordEnd = new vscode.Position(cursor.line, wordEndPos);
+    const wordEnd = new vscode.Position(newActive.line, wordEndPos);
 
-    rangesToDelete.push(new vscode.Range(cursor, wordEnd));
-    newSelections.push(new vscode.Selection(wordEnd, wordEnd));
+    rangesToDelete.push(new vscode.Range(newActive, wordEnd));
+    newSelections.push(createNewSelection(selection, wordEnd));
   }
 
   return { newSelections, rangesToDelete };
 }
 
-function searchBackward(): {
+function searchBackward(moveAnchor: boolean = true): {
   newSelections: vscode.Selection[];
   rangesToDelete: vscode.Range[];
 } {
   const document = vscode.window.activeTextEditor!.document;
   const selections = vscode.window.activeTextEditor!.selections;
 
+  const createNewSelection = (oldSelection: vscode.Selection, newActive: vscode.Position) => {
+    return new vscode.Selection(moveAnchor ? newActive : oldSelection.anchor, newActive);
+  };
+
   const newSelections: vscode.Selection[] = [];
   const rangesToDelete: vscode.Range[] = [];
 
   for (const selection of selections) {
-    let cursor = selection.start;
-    const line = document.lineAt(cursor.line);
+    let newActive = selection.active;
+    const line = document.lineAt(newActive.line);
 
-    if (cursor.character === 0 && cursor.line === 0) {
-      newSelections.push(new vscode.Selection(cursor, cursor));
+    if (newActive.character === 0 && newActive.line === 0) {
+      newSelections.push(createNewSelection(selection, newActive));
       continue;
     }
 
@@ -190,17 +216,17 @@ function searchBackward(): {
      * then continue the process of moving backward.
      */
     if (
-      cursor.character !== 0 && isWhiteSpaceOrAsciiSymbol(line.text[cursor.character - 1])
+      newActive.character !== 0 && isWhiteSpaceOrAsciiSymbol(line.text[newActive.character - 1])
     ) {
       const nonSpacePos = findLastContentChar(
-        line.text.slice(0, cursor.character),
+        line.text.slice(0, newActive.character),
       );
-      const whitespaceStart = new vscode.Position(cursor.line, nonSpacePos === undefined ? 0 : nonSpacePos + 1);
-      rangesToDelete.push(new vscode.Range(whitespaceStart, cursor));
-      cursor = whitespaceStart;
+      const whitespaceStart = new vscode.Position(newActive.line, nonSpacePos === undefined ? 0 : nonSpacePos + 1);
+      rangesToDelete.push(new vscode.Range(whitespaceStart, newActive));
+      newActive = whitespaceStart;
 
-      if (cursor.character === 0) {
-        newSelections.push(new vscode.Selection(cursor, cursor));
+      if (newActive.character === 0) {
+        newSelections.push(createNewSelection(selection, newActive));
         continue;
       }
     }
@@ -210,21 +236,21 @@ function searchBackward(): {
      * and the previous line exists,
      * jump to the end of the previous line.
      */
-    if (cursor.character === 0 && cursor.line > 0) {
-      const prevLineEnd = document.lineAt(cursor.line - 1).range.end;
-      newSelections.push(new vscode.Selection(prevLineEnd, prevLineEnd));
+    if (newActive.character === 0 && newActive.line > 0) {
+      const prevLineEnd = document.lineAt(newActive.line - 1).range.end;
+      newSelections.push(createNewSelection(selection, prevLineEnd));
       continue;
     }
 
-    const wordStartPos = findWordStartPosition(cursor.character, line.text);
+    const wordStartPos = findWordStartPosition(newActive.character, line.text);
     if (wordStartPos === undefined) {
       newSelections.push(selection);
       continue;
     }
-    const wordStart = new vscode.Position(cursor.line, wordStartPos);
+    const wordStart = new vscode.Position(newActive.line, wordStartPos);
 
-    rangesToDelete.push(new vscode.Range(wordStart, cursor));
-    newSelections.push(new vscode.Selection(wordStart, wordStart));
+    rangesToDelete.push(new vscode.Range(wordStart, newActive));
+    newSelections.push(createNewSelection(selection, wordStart));
   }
 
   return { newSelections, rangesToDelete };

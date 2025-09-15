@@ -55,6 +55,14 @@
         "title": "Jieba: Backward Word"
       },
       {
+        "command": "jieba.forwardSelectWord",
+        "title": "Jieba: Forward Select Word (Preserve anchor)"
+      },
+      {
+        "command": "jieba.backwardSelectWord",
+        "title": "Jieba: Backward Select Word (Preserve anchor)"
+      },
+      {
         "command": "jieba.killWord",
         "title": "Jieba: Kill Word"
       },
@@ -94,7 +102,9 @@
     "watch": "tsc -watch -p ./",
     "pretest": "bun run compile && bun run lint",
     "lint": "eslint src --ext ts",
-    "test": "bun ./out/test/runTest.js"
+    "test": "bun ./out/test/runTest.js",
+    "package": "bunx @vscode/vsce package",
+    "publish": "bunx @vscode/vsce publish"
   },
   "devDependencies": {
     "@types/glob": "^8.0.0",

@@ -2,7 +2,9 @@ import * as vscode from "vscode";
 import {
   backwardKillWord,
   backwardWord,
+  backwardSelectWord,
   forwardWord,
+  forwardSelectWord,
   killWord,
   selectWord,
 } from "./command";
@@ -12,6 +14,8 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.commands.registerCommand("jieba.forwardWord", forwardWord),
     vscode.commands.registerCommand("jieba.backwardWord", backwardWord),
+    vscode.commands.registerCommand("jieba.forwardSelectWord", forwardSelectWord),
+    vscode.commands.registerCommand("jieba.backwardSelectWord", backwardSelectWord),
     vscode.commands.registerCommand("jieba.killWord", killWord),
     vscode.commands.registerCommand("jieba.backwardKillWord", backwardKillWord),
     vscode.commands.registerCommand("jieba.selectWord", selectWord),

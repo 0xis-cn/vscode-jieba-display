@@ -10,13 +10,15 @@ VSCode 本身以及 Vim、Emacs 插件都不具备中文分词功能。比如 Vi
 
 ## 使用方式
 
-| 命令                     | 描述                 | 默认键位                      |
-|--------------------------|----------------------|-------------------------------|
-| `jieba.forwardWord`      | 将光标移至词尾       | `Shift` + `Alt` + `F`         |
-| `jieba.backwardWord`     | 将光标移至词首       | `Shift` + `Alt` + `B`         |
-| `jieba.killWord`         | 光标前进删除一个词   | `Shift` + `Alt` + `D`         |
-| `jieba.backwardKillWord` | 光标后退删除一个词   | `Shift` + `Alt` + `Backspace` |
-| `jieba.selectWord`       | 选中光标下方的一个词 | `Shift` + `Alt` + `2`         |
+| 命令                       | 描述                         | 默认键位                      |
+| -------------------------- | ---------------------------- | ----------------------------- |
+| `jieba.forwardWord`        | 将光标移至词尾               | `Shift` + `Alt` + `F`         |
+| `jieba.backwardWord`       | 将光标移至词首               | `Shift` + `Alt` + `B`         |
+| `jieba.killWord`           | 光标前进删除一个词           | `Shift` + `Alt` + `D`         |
+| `jieba.backwardKillWord`   | 光标后退删除一个词           | `Shift` + `Alt` + `Backspace` |
+| `jieba.selectWord`         | 选中光标下方的一个词         | `Shift` + `Alt` + `2`         |
+| `jieba.forwardSelectWord`  | 将光标移至词尾（选择模式下） |                               |
+| `jieba.backwardSelectWord` | 将光标移至词首（选择模式下） |                               |
 
 如果需要双击选中时分词，请启用`selectOnDoubleClick`设置。
 
@@ -33,6 +35,8 @@ VSCode 本身以及 Vim、Emacs 插件都不具备中文分词功能。比如 Vi
 ### Vim 插件
 
 可以做如下键位绑定：
+
+Normal mode:
 
 ``` json
 "vim.normalModeKeyBindings": [
@@ -52,6 +56,21 @@ VSCode 本身以及 Vim、Emacs 插件都不具备中文分词功能。比如 Vi
         "before": ["d", "b"],
         "commands": ["jieba.backwardKillWord"]
     }
+],
+```
+
+Visual mode:
+
+```json
+"vim.visualModeKeyBindings": [
+    {
+        "before": ["w"],
+        "commands": ["jieba.forwardSelectWord"]
+    },
+    {
+        "before": ["b"],
+        "commands": ["jieba.backwardSelectWord"]
+    },
 ],
 ```
 

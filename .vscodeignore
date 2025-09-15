@@ -5,9 +5,11 @@ src/**
 .yarnrc
 vsc-extension-quickstart.md
 **/tsconfig.json
-**/.eslintrc.json
+**/eslint.config.mjs
 **/*.map
 **/*.ts
+**/bun.lock
+out/test/**
 images/**
 
 node_modules/jieba-wasm/pkg/deno/
