@@ -9,3 +9,7 @@ vsc-extension-quickstart.md
 **/*.map
 **/*.ts
 images/**
+
+node_modules/jieba-wasm/pkg/deno/
+node_modules/jieba-wasm/pkg/web/
+node_modules/jieba-wasm/pkg/bundler/

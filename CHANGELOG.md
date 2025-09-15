@@ -1,5 +1,13 @@
 # Change Log
 
+## 0.2.1
+
+- Include wasm build for nodejs only 
+
+## 0.2.0
+
+- Add selection on double click
+
 ## 0.1.8
 
 - Update dependencies
