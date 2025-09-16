@@ -121,7 +121,7 @@
     "typescript": "^5.9.2"
   },
   "dependencies": {
-    "@stevenlin/jieba-wasm": "^2.4.0",
+    "jieba-wasm": "^2.4.0",
     "quick-lru": "^7.1.0"
   }
 }
