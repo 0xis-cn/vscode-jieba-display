@@ -112,7 +112,7 @@ export function selectWord() {
   });
 }
 
-function searchForward(moveAnchor = true): {
+function searchForward(moveAnchor: boolean = true): {
   newSelections: vscode.Selection[];
   rangesToDelete: vscode.Range[];
 } {
@@ -185,7 +185,7 @@ function searchForward(moveAnchor = true): {
   return { newSelections, rangesToDelete };
 }
 
-function searchBackward(moveAnchor = true, thickCursor = true): {
+function searchBackward(moveAnchor: boolean = true): {
   newSelections: vscode.Selection[];
   rangesToDelete: vscode.Range[];
 } {
@@ -193,15 +193,7 @@ function searchBackward(moveAnchor = true, thickCursor = true): {
   const selections = vscode.window.activeTextEditor!.selections;
 
   const createNewSelection = (oldSelection: vscode.Selection, newActive: vscode.Position) => {
-    if (moveAnchor) {
-      return new vscode.Selection(newActive, newActive);
-    } else if (thickCursor && oldSelection.active > oldSelection.anchor && newActive <= oldSelection.anchor) {
-      // vim visual 模式下刚刚按下v选中单个字符，例如第a行第b个字符，此时 selection=[a:b -> a:b+1)|，光标覆盖该字符
-      // 此时后退选择，需要将 anchor 往右移动一位，以确保 selection 仍覆盖字符 [a:b]，与 vim 原生行为一致
-      return new vscode.Selection(oldSelection.anchor.translate(0, 1), newActive);
-    } else {
-      return new vscode.Selection(oldSelection.anchor, newActive);
-    }
+    return new vscode.Selection(moveAnchor ? newActive : oldSelection.anchor, newActive);
   };
 
   const newSelections: vscode.Selection[] = [];
