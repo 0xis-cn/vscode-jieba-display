@@ -9,8 +9,19 @@ import {
   selectWord,
 } from "./command";
 import { doubleClickOnTextListener } from "./listener";
+import { initializeSegmenter } from "./parse";
 
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext) {
+
+  // 插件激活时，首次读取配置并初始化分词器
+  await initializeSegmenter();
+  // 监听配置更改。当用户切换分词器设置时，重新初始化。
+  const disposableConfigListener = vscode.workspace.onDidChangeConfiguration(async (event) => {
+    if (event.affectsConfiguration('jieba.segmenter') || event.affectsConfiguration('jieba.intlSegmenterLocales')) {
+      await initializeSegmenter();
+    }
+  });
+
   context.subscriptions.push(
     vscode.commands.registerCommand("jieba.forwardWord", forwardWord),
     vscode.commands.registerCommand("jieba.backwardWord", backwardWord),
@@ -20,6 +31,7 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand("jieba.backwardKillWord", backwardKillWord),
     vscode.commands.registerCommand("jieba.selectWord", selectWord),
     vscode.window.onDidChangeTextEditorSelection(doubleClickOnTextListener),
+    disposableConfigListener,
   );
 }
 

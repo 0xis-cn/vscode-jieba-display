@@ -2,7 +2,7 @@
   "name": "jieba",
   "displayName": "Jieba",
   "description": "Jieba Chinese word segmenter for VSCode",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "engines": {
     "vscode": "^1.104.0"
   },
@@ -16,7 +16,9 @@
   "license": "MIT",
   "keywords": [
     "Chinese",
-    "Segmentation"
+    "Segmentation",
+    "中文",
+    "中文分词"
   ],
   "categories": [
     "Other"
@@ -56,11 +58,11 @@
       },
       {
         "command": "jieba.forwardSelectWord",
-        "title": "Jieba: Forward Select Word (Preserve anchor)"
+        "title": "Jieba: Forward Select Word"
       },
       {
         "command": "jieba.backwardSelectWord",
-        "title": "Jieba: Backward Select Word (Preserve anchor)"
+        "title": "Jieba: Backward Select Word"
       },
       {
         "command": "jieba.killWord",
@@ -78,6 +80,29 @@
     "configuration": {
       "title": "Jieba",
       "properties": {
+        "jieba.segmenter": {
+          "type": "string",
+          "default": "jieba-wasm",
+          "description": "Selects the segmenter engine for text segmentation.",
+          "enum": [
+            "jieba-wasm",
+            "Intl.Segmenter"
+          ],
+          "enumDescriptions": [
+            "Use Jieba segmenter (best for Chinese)",
+            "Use Node's Intl.Segmenter (supports multiple languages, but has smaller dictionary)"
+          ]
+        },
+        "jieba.intlSegmenterLocales": {
+          "type": "array",
+          "default": [
+            "zh-CN"
+          ],
+          "description": "A list of language locales for the Intl.Segmenter. Only applies when 'Segmenter' is set to 'Intl.Segmenter'.",
+          "items": {
+            "type": "string"
+          }
+        },
         "jieba.enableOnDoubleClick": {
           "type": "boolean",
           "default": false,

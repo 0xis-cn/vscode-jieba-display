@@ -11,6 +11,8 @@ import {
   forwardWord,
   killWord,
 } from "../../command";
+import { initializeSegmenter } from "../../parse";
+
 
 suite("Extension Test Suite", () => {
   vscode.window.showInformationMessage("Start all tests.");
@@ -53,6 +55,7 @@ const longText = `“自由地运行程序”（自由度0）意味着任何人�
 /* eslint-enable max-len */
 
 async function basicTest() {
+  await initializeSegmenter();
   const doc = await vscode.workspace.openTextDocument();
   await vscode.window.showTextDocument(doc);
   const editor = vscode.window.activeTextEditor;
@@ -95,6 +98,7 @@ async function basicTest() {
 }
 
 async function englishTest() {
+  await initializeSegmenter();
   const doc = await vscode.workspace.openTextDocument();
   await vscode.window.showTextDocument(doc);
   const editor = vscode.window.activeTextEditor;
@@ -131,6 +135,7 @@ async function englishTest() {
 }
 
 async function jsExpTest() {
+  await initializeSegmenter();
   const doc = await vscode.workspace.openTextDocument();
   await vscode.window.showTextDocument(doc);
   const editor = vscode.window.activeTextEditor;
@@ -182,6 +187,7 @@ async function jsExpTest() {
 }
 
 async function selectionTest() {
+  await initializeSegmenter();
   const doc = await vscode.workspace.openTextDocument();
   await vscode.window.showTextDocument(doc);
   const editor = vscode.window.activeTextEditor;
@@ -214,6 +220,7 @@ async function selectionTest() {
 }
 
 async function longTextTest() {
+  await initializeSegmenter();
   const doc = await vscode.workspace.openTextDocument();
   await vscode.window.showTextDocument(doc);
   const editor = vscode.window.activeTextEditor;
