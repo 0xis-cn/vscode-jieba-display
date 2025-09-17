@@ -75,6 +75,10 @@
       {
         "command": "jieba.selectWord",
         "title": "Jieba: Select Word"
+      },
+      {
+        "command": "jieba.highlightPosTag",
+        "title": "Jieba: Highlight POS Tags"
       }
     ],
     "configuration": {

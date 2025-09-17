@@ -9,7 +9,7 @@ import {
   selectWord,
 } from "./command";
 import { doubleClickOnTextListener } from "./listener";
-import { initializeSegmenter } from "./parse";
+import { initializeSegmenter, highlightPosTagsInEditor } from "./parse";
 
 export async function activate(context: vscode.ExtensionContext) {
 
@@ -30,6 +30,7 @@ export async function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand("jieba.killWord", killWord),
     vscode.commands.registerCommand("jieba.backwardKillWord", backwardKillWord),
     vscode.commands.registerCommand("jieba.selectWord", selectWord),
+    vscode.commands.registerCommand("jieba.highlightPosTag", highlightPosTagsInEditor),
     vscode.window.onDidChangeTextEditorSelection(doubleClickOnTextListener),
     disposableConfigListener,
   );

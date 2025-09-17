@@ -113,6 +113,54 @@ export function selectWord() {
   });
 }
 
+export async function highlightPosTag() {
+  const editor = vscode.window.activeTextEditor;
+  if (!editor) {
+    vscode.window.showInformationMessage('No active editor.');
+    return;
+  }
+  const document = editor.document;
+  const jieba = await import('jieba-wasm');
+  const posColors: Record<string, string> = {
+    n: '#FFB300', // 名词
+    v: '#29B6F6', // 动词
+    a: '#66BB6A', // 形容词
+    d: '#AB47BC', // 副词
+    m: '#EC407A', // 数量词
+    r: '#FFA726', // 代词
+    c: '#8D6E63', // 连词
+    p: '#789262', // 介词
+    u: '#90A4AE', // 助词
+    x: '#BDBDBD', // 其它
+    // ...可扩展更多词性
+  };
+  const decorations: Record<string, vscode.TextEditorDecorationType> = {};
+  for (const [pos, color] of Object.entries(posColors)) {
+    decorations[pos] = vscode.window.createTextEditorDecorationType({
+      backgroundColor: color + '55', // 半透明
+      borderRadius: '2px',
+    });
+  }
+  // 清空所有装饰
+  Object.values(decorations).forEach(dec => editor.setDecorations(dec, []));
+  // 处理每一行
+  for (let lineNum = 0; lineNum < document.lineCount; lineNum++) {
+    const lineText = document.lineAt(lineNum).text;
+    const tokens = jieba.tag(lineText); // [{word, tag, start, end}]
+    for (const token of tokens) {
+      const colorKey = token.tag?.[0] || 'x';
+      const deco = decorations[colorKey];
+      if (!deco) continue;
+      const range = new vscode.Range(
+        new vscode.Position(lineNum, token.start),
+        new vscode.Position(lineNum, token.end)
+      );
+      editor.setDecorations(deco, [ ...(editor.getDecorations(deco) || []), range ]);
+    }
+  }
+  vscode.window.showInformationMessage('词性高亮已完成。');
+}
+
 function searchForward(moveAnchor: boolean = true): {
   newSelections: vscode.Selection[];
   rangesToDelete: vscode.Range[];
