@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.3.6
+
+- Add `Intl.Segmenter` as an option
+
 ## 0.3.0
 
 - Add forward/backward in selection mode
